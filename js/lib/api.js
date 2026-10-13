@@ -129,6 +129,50 @@ async function drawScaled(source, w, h, max = 640) {
   ctx.drawImage(source, 0, 0, canvas.width, canvas.height);
   return new Promise((res) => canvas.toBlob((b) => res(b), 'image/jpeg', 0.82));
 }
+/** True when a thumbnail blob is (almost) one flat colour, e.g. a black first frame. */
+async function isBlank(blob) {
+  try {
+    const bmp = await createImageBitmap(blob);
+    const c = document.createElement('canvas'); c.width = 16; c.height = 16;
+    const ctx = c.getContext('2d', { willReadFrequently: true });
+    ctx.drawImage(bmp, 0, 0, 16, 16); bmp.close?.();
+    const d = ctx.getImageData(0, 0, 16, 16).data;
+    let sum = 0; const lum = [];
+    for (let i = 0; i < d.length; i += 4) { const l = 0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2]; lum.push(l); sum += l; }
+    const mean = sum / lum.length;
+    const sd = Math.sqrt(lum.reduce((a, l) => a + (l - mean) ** 2, 0) / lum.length);
+    return sd < 3;
+  } catch { return false; }
+}
+
+/** Grab a representative frame from a video (File blob URL or CORS-enabled URL). */
+async function videoFrame(src, { cors = false } = {}) {
+  const v = document.createElement('video');
+  v.muted = true; v.playsInline = true; v.preload = 'auto';
+  if (cors) v.crossOrigin = 'anonymous';
+  v.src = src;
+  const wait = (ev, ms) => new Promise((res, rej) => {
+    const t = setTimeout(() => rej(new Error(`timeout ${ev}`)), ms);
+    v.addEventListener(ev, () => { clearTimeout(t); res(); }, { once: true });
+    v.addEventListener('error', () => { clearTimeout(t); rej(new Error('video error')); }, { once: true });
+  });
+  try {
+    await wait('loadedmetadata', 12000);
+    const dur = Number.isFinite(v.duration) && v.duration > 0 ? v.duration : 2;
+    let last = null;
+    for (const frac of [0.1, 0.35, 0.6]) {
+      try {
+        v.currentTime = Math.max(0.05, Math.min(dur * frac, dur - 0.05));
+        await wait('seeked', 8000);
+        if (v.readyState < 2) await wait('loadeddata', 8000);
+        const blob = await drawScaled(v, v.videoWidth || 640, v.videoHeight || 360);
+        if (blob) { last = blob; if (!(await isBlank(blob))) return blob; }
+      } catch { /* try the next position */ }
+    }
+    return last;
+  } finally { v.removeAttribute('src'); v.load(); }
+}
+
 export async function makeThumbnail(file, mime) {
   try {
     if (mime.startsWith('image/') && mime !== 'image/tiff') {
@@ -139,16 +183,22 @@ export async function makeThumbnail(file, mime) {
     }
     if (mime.startsWith('video/')) {
       const url = URL.createObjectURL(file);
-      try {
-        const v = document.createElement('video');
-        v.muted = true; v.playsInline = true; v.preload = 'metadata'; v.src = url;
-        await new Promise((res, rej) => { v.onloadeddata = res; v.onerror = rej; setTimeout(rej, 8000); });
-        v.currentTime = Math.min(1, (v.duration || 2) / 2);
-        await new Promise((res) => { v.onseeked = res; setTimeout(res, 3000); });
-        return await drawScaled(v, v.videoWidth || 640, v.videoHeight || 360);
-      } finally { URL.revokeObjectURL(url); }
+      try { return await videoFrame(url); } finally { URL.revokeObjectURL(url); }
     }
   } catch { /* thumbnails are optional */ }
+  return null;
+}
+
+/** Same as makeThumbnail but from a (signed) URL, used to repair videos that have no thumbnail yet. */
+export async function makeThumbnailFromUrl(url, mime) {
+  try {
+    if (mime.startsWith('video/')) return await videoFrame(url, { cors: true });
+    if (mime.startsWith('image/') && mime !== 'image/tiff') {
+      const img = new Image(); img.crossOrigin = 'anonymous'; img.src = url;
+      await img.decode();
+      return await drawScaled(img, img.naturalWidth, img.naturalHeight);
+    }
+  } catch { /* optional */ }
   return null;
 }
 
