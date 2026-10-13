@@ -13,7 +13,7 @@ const TITLES = () => ({
   explore: [tr('Explore the library', 'Chunguza maktaba'), tr('Everything Terraviva has approved for public use.', 'Kila kitu ambacho Terraviva imeidhinisha kwa matumizi ya umma.')],
   photos: [t('pub.nav.photos'), tr('Photographs from our field work and community events.', 'Picha kutoka kazi zetu za uwandani na matukio ya jamii.')],
   videos: [t('pub.nav.videos'), tr('Films and recordings from our programmes.', 'Filamu na rekodi kutoka programu zetu.')],
-  publications: [t('pub.nav.publications'), tr('Reports, guides and learning materials you can read and download.', 'Ripoti, miongozo na vifaa vya kujifunzia unavyoweza kusoma na kupakua.')],
+  publications: [t('pub.nav.publications'), tr('Reports, guides and learning materials you can read online.', 'Ripoti, miongozo na vifaa vya kujifunzia unavyoweza kusoma mtandaoni.')],
   environment: [tr('Environmental resources', 'Rasilimali za mazingira'), tr('Conservation, biodiversity, waste management and climate education.', 'Uhifadhi, bioanuwai, usimamizi wa taka na elimu ya hali ya hewa.')],
   agriculture: [tr('Agricultural resources', 'Rasilimali za kilimo'), tr('Agroforestry, soil care and climate-smart farming guides.', 'Kilimo mseto, utunzaji wa udongo na miongozo ya kilimo kinachostahimili tabianchi.')],
 });
