@@ -1,0 +1,12 @@
+{
+  "name": "terravault",
+  "version": "1.0.0",
+  "private": true,
+  "description": "TerraVault by Terraviva — Digital Asset Management platform",
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build-env.mjs",
+    "start": "python3 -m http.server 8000"
+  },
+  "engines": { "node": ">=18" }
+}
