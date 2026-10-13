@@ -16,6 +16,24 @@ Interface is bilingual (English / Kiswahili).
 
 `js/config.js` holds the project URL and the *public* anon key (safe in the browser: all tables are protected by RLS).
 
+## Environment variables & URLs
+Set the same three **public** values wherever you deploy (see `.env.example`):
+
+| Name | Where | Value |
+|---|---|---|
+| `SUPABASE_URL` | Vercel env var / GitHub Actions variable | `https://nfrrkbxlndzufqierwqd.supabase.co` |
+| `SUPABASE_ANON_KEY` | same | Supabase -> Project Settings -> API (anon / publishable key) |
+| `SITE_URL` | same | Public site address, no trailing slash, e.g. `https://terra-vault.vercel.app` |
+
+`npm run build` writes them to `js/env.js`; if nothing is set the defaults in `js/config.js` are used.
+Never add the `service_role` key to this project.
+
+**Supabase -> Authentication -> URL Configuration**
+- *Site URL*: the same value as `SITE_URL`
+- *Redirect URLs*: `SITE_URL`, `SITE_URL/**`, and `http://localhost:8000/**` for local work
+
+These are required for the confirmation and **Forgot password** e-mails to open the right site.
+
 ## Structure
 | Path | Purpose |
 |---|---|
