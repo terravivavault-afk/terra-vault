@@ -66,8 +66,6 @@ export function metaForm(v = {}, refs, { bulk = false } = {}) {
         ${field(tr('Copyright holder', 'Mmiliki wa hakimiliki'), html`<input class="input" name="copyright_holder" value="${v.copyright_holder ?? ''}" placeholder="Terraviva">`)}
         ${field(tr('Usage terms', 'Masharti ya matumizi'), html`<textarea class="input" name="usage_rights" rows="2">${v.usage_rights ?? ''}</textarea>`, { wide: true })}
         ${field(tr('Department', 'Idara'), html`<input class="input" name="department" value="${v.department ?? ''}">`, { wide: true })}
-        <label class="check wide"><input type="checkbox" name="public_download" ${v.public_download === false ? '' : raw('checked')}>
-          <span>${tr('Allow visitors to download this file once it is published', 'Ruhusu wageni kupakua faili hii ikishachapishwa')}</span></label>
         ${refs.fields.map((f) => customFieldControl(f, custom[f.key]))}
       </div>
     </details>`;
@@ -103,7 +101,7 @@ export function readMeta(form, refs, { bulk = false } = {}) {
     department: g('department'), country: g('country'), region: g('region'), district: g('district'), ward: g('ward'),
     captured_at: g('captured_at'), language: g('language'), creator: g('creator'),
     copyright_holder: g('copyright_holder'), usage_rights: g('usage_rights'),
-    public_download: form.querySelector('[name=public_download]')?.checked ?? true,
+    public_download: false, // the public library is view-only
     keywords: (g('keywords') || '').split(',').map((s) => s.trim()).filter(Boolean),
   };
   if (!bulk) out.title = (fd.get('title') || '').toString().trim();
