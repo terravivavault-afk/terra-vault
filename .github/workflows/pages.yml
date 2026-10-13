@@ -20,6 +20,12 @@ jobs:
       - uses: actions/checkout@v4
       - name: Syntax check JavaScript
         run: for f in $(find js -name '*.js'); do node --check "$f"; done
+      - name: Generate js/env.js from repository variables
+        env:
+          SUPABASE_URL: ${{ vars.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ vars.SUPABASE_ANON_KEY }}
+          SITE_URL: ${{ vars.SITE_URL }}
+        run: node scripts/build-env.mjs
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
