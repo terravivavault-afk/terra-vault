@@ -1306,3 +1306,17 @@ a.sw-link:hover { background: var(--surface-2); text-decoration: none; border-ra
 .pct { font-variant-numeric: tabular-nums; }
 .ic { display: inline-flex; vertical-align: middle; }
 .hero-copy, .hero-grid > * { min-width: 0; }
+
+/* ---------- 19. Auth page: centred brand and copy ---------- */
+.auth-art.auth-art-center { align-items: center; justify-content: center; text-align: center; }
+.auth-art-center .auth-art-copy { align-items: center; margin: 0 auto; text-align: center; }
+.auth-art-center .auth-art-copy p { margin-inline: auto; text-wrap: balance; }
+.auth-art-center .auth-art-copy h2 { text-wrap: balance; }
+.auth-art-center .brand { flex-direction: column; gap: .5rem; text-align: center; }
+.auth-art-center .brand img { width: 72px; }
+.auth-art-center .brand span { align-items: center; }
+.auth-art-center .brand small { display: block; }
+.auth-card > h1, .auth-card > .muted-text { text-align: center; }
+.auth-card .row.between { justify-content: center; }
+.auth-card .hint { text-align: left; }
+@media (min-width: 960px) { .auth-art.auth-art-center { padding: var(--s-7) var(--s-8); } .auth-art-center .auth-art-copy { margin-bottom: 0; } }
