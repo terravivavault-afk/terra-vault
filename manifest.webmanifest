@@ -1,0 +1,14 @@
+{
+  "name": "TerraVault by Terraviva",
+  "short_name": "TerraVault",
+  "description": "Terraviva's digital asset library. Protecting Nature, Empowering Communities.",
+  "start_url": "./#/",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#FEFFF1",
+  "theme_color": "#006E70",
+  "icons": [
+    { "src": "assets/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "assets/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ]
+}
