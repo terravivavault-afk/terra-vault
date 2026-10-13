@@ -48,9 +48,12 @@ async function pdfViewer(host, url) {
   await draw();
 }
 
-function fallback(host, { category, mime, title }, note) {
+function fallback(host, { category, mime, title, viewOnly }, note) {
+  const def = viewOnly
+    ? tr('A preview is not available for this file type.', 'Hakuna onyesho la awali kwa aina hii ya faili.')
+    : tr('A preview is not available for this file type. Download it to open it.', 'Hakuna onyesho la awali kwa aina hii ya faili. Ipakue ili uifungue.');
   host.innerHTML = `<div class="preview-fallback"><span class="pf-ic">${icon(CATEGORY_ICON[category] || 'file', 40)}</span>
-    <b>${esc(title || '')}</b><p>${esc(note || tr('A preview is not available for this file type. Download it to open it.', 'Hakuna onyesho la awali kwa aina hii ya faili. Ipakue ili uifungue.'))}</p></div>`;
+    <b>${esc(title || '')}</b><p>${esc(note || def)}</p></div>`;
 }
 
 /**
@@ -58,21 +61,22 @@ function fallback(host, { category, mime, title }, note) {
  * item: { category, mime, url, thumb, title }
  */
 export async function renderPreview(host, item) {
-  const { category, mime = '', url, thumb, title } = item;
+  const { category, mime = '', url, thumb, title, viewOnly = false } = item;
   host.classList.add('preview');
   if (!url) return fallback(host, item);
   try {
     if (category === 'photo' && mime !== 'image/tiff') {
-      host.innerHTML = `<button type="button" class="preview-img" aria-label="${esc(tr('Enlarge image', 'Kuza picha'))}"><img src="${esc(url)}" alt="${esc(title || '')}"></button>`;
+      host.innerHTML = `<button type="button" class="preview-img" aria-label="${esc(tr('Enlarge image', 'Kuza picha'))}"><img src="${esc(url)}" alt="${esc(title || '')}"${viewOnly ? ' draggable="false"' : ''}></button>`;
       const img = host.querySelector('img');
       img.addEventListener('error', () => fallback(host, item), { once: true });
       host.querySelector('button').addEventListener('click', () => {
-        openModal({ title: title || '', size: 'xl', body: html`<img class="lightbox-img" src="${url}" alt="${title || ''}">` });
+        const m = openModal({ title: title || '', size: 'xl', body: html`<img class="lightbox-img" src="${url}" alt="${title || ''}"${raw(viewOnly ? ' draggable="false"' : '')}>` });
+        if (viewOnly) lockMedia(m.el);
       });
     } else if (category === 'video') {
-      host.innerHTML = `<video controls preload="metadata" playsinline ${thumb ? `poster="${esc(thumb)}"` : ''} src="${esc(url)}"></video>`;
+      host.innerHTML = `<video controls preload="metadata" playsinline ${viewOnly ? 'controlsList="nodownload noremoteplayback" disablePictureInPicture ' : ''}${thumb ? `poster="${esc(thumb)}"` : ''} src="${esc(url)}${thumb ? '' : '#t=0.5'}"></video>`;
     } else if (category === 'audio') {
-      host.innerHTML = `<div class="preview-audio"><span class="pf-ic">${icon('music', 40)}</span><audio controls preload="metadata" src="${esc(url)}"></audio></div>`;
+      host.innerHTML = `<div class="preview-audio"><span class="pf-ic">${icon('music', 40)}</span><audio controls preload="metadata" ${viewOnly ? 'controlsList="nodownload" ' : ''}src="${esc(url)}"></audio></div>`;
     } else if (mime === 'application/pdf') {
       host.classList.add('preview-pdf');
       await pdfViewer(host, url);
@@ -84,7 +88,16 @@ export async function renderPreview(host, item) {
     } else {
       fallback(host, item);
     }
+    if (viewOnly) lockMedia(host);
   } catch {
-    fallback(host, item, tr('We could not load the preview. You can still download the file.', 'Hatukuweza kupakia onyesho la awali. Bado unaweza kupakua faili.'));
+    fallback(host, item, viewOnly
+      ? tr('We could not load the preview. Please try again later.', 'Hatukuweza kupakia onyesho la awali. Tafadhali jaribu tena baadaye.')
+      : tr('We could not load the preview. You can still download the file.', 'Hatukuweza kupakia onyesho la awali. Bado unaweza kupakua faili.'));
   }
+}
+
+/** Public pages are view-only: no right-click save and no drag-out of the media. */
+function lockMedia(root) {
+  root.addEventListener('contextmenu', (e) => { if (e.target.closest('img,video,audio,canvas')) e.preventDefault(); });
+  root.addEventListener('dragstart', (e) => { if (e.target.closest('img,video')) e.preventDefault(); });
 }
