@@ -1,10 +1,10 @@
 // Public detail page for one published asset. No private filenames or internal fields appear here.
 import { sb } from '../lib/supabase.js';
-import { html, raw, mount, fmtBytes, fmtDate, extOf, copyText, slugify } from '../lib/util.js';
+import { html, raw, mount, fmtBytes, fmtDate, copyText } from '../lib/util.js';
 import { t, tr } from '../lib/i18n.js';
 import { icon } from '../lib/icons.js';
-import { assetCard, emptyState, programName, toast, withBusy } from '../lib/ui.js';
-import { PUBLIC_ASSET_SELECT, signedUrls, downloadAsset, hydrateThumbs } from '../lib/api.js';
+import { assetCard, emptyState, programName, toast } from '../lib/ui.js';
+import { PUBLIC_ASSET_SELECT, signedUrls, hydrateThumbs } from '../lib/api.js';
 import { renderPreview } from '../lib/preview.js';
 import { cdnUrl, cdnThumb } from '../lib/cloudinary.js';
 
@@ -42,7 +42,6 @@ export default async function publicAsset(ctx) {
           <h1>${a.title}</h1>
           ${a.description ? html`<p class="asset-desc">${a.description}</p>` : ''}
           <div class="side-actions">
-            ${a.public_download ? html`<button class="btn btn-primary" id="dl">${raw(icon('download', 18))}${t('common.download')}</button>` : ''}
             <button class="btn btn-ghost" id="copy">${raw(icon('link', 18))}${tr('Copy link', 'Nakili kiungo')}</button>
           </div>
           <dl class="kv">${kv.map(([k, v]) => html`<div><dt>${k}</dt><dd>${v}</dd></div>`)}</dl>
@@ -60,13 +59,8 @@ export default async function publicAsset(ctx) {
   if (!ctx.isCurrent()) return;
   const host = ctx.view.querySelector('#preview');
   host.classList.remove('loading');
-  await renderPreview(host, { category: a.category, mime: a.mime_type, url: cdnUrl(a) || urls.get(a.storage_path), thumb: cdnThumb(a, 1280, 720) || urls.get(a.thumbnail_path), title: a.title });
+  await renderPreview(host, { category: a.category, mime: a.mime_type, url: cdnUrl(a) || urls.get(a.storage_path), thumb: cdnThumb(a, 1280, 720) || urls.get(a.thumbnail_path), title: a.title, viewOnly: true });
 
-  ctx.view.querySelector('#dl')?.addEventListener('click', (e) => withBusy(e.currentTarget, async () => {
-    try {
-      await downloadAsset(a, { filename: `${slugify(a.title) || 'terraviva'}.${extOf(a.storage_path) || 'file'}` });
-    } catch (err) { toast(err.message, 'error'); }
-  }));
   ctx.view.querySelector('#copy').addEventListener('click', async () => {
     await copyText(location.href); toast(tr('Link copied.', 'Kiungo kimenakiliwa.'), 'success');
   });
