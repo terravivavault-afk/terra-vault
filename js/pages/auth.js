@@ -6,8 +6,9 @@ import { tr, getLang } from '../lib/i18n.js';
 import { icon } from '../lib/icons.js';
 import { landscape } from '../lib/art.js';
 import { withBusy, toast } from '../lib/ui.js';
+import { SITE_URL } from '../config.js';
 
-const appUrl = () => location.origin + location.pathname;
+const appUrl = () => SITE_URL || location.origin + location.pathname;
 
 function friendly(err) {
   const m = err?.message || '';
@@ -24,13 +25,18 @@ const passwordField = (name, label, autocomplete) => html`
   <label class="field"><span class="label">${label}</span>
     <span class="input-wrap">
       <input class="input" type="password" name="${name}" required minlength="8" autocomplete="${autocomplete}">
-      <button class="icon-btn show-pw" type="button" aria-label="${tr('Show password', 'Onyesha nenosiri')}" data-show>${raw(icon('eye', 18))}</button>
+      <button class="icon-btn show-pw" type="button" aria-label="${tr('Show password', 'Onyesha nenosiri')}" aria-pressed="false" data-show>${raw(icon('eye', 18))}</button>
     </span></label>`;
 
 function bindShow(form) {
   form.querySelectorAll('[data-show]').forEach((b) => b.addEventListener('click', () => {
     const input = b.parentElement.querySelector('input');
-    input.type = input.type === 'password' ? 'text' : 'password';
+    const reveal = input.type === 'password';
+    input.type = reveal ? 'text' : 'password';
+    b.innerHTML = icon(reveal ? 'eye-off' : 'eye', 18);
+    b.setAttribute('aria-pressed', String(reveal));
+    b.setAttribute('aria-label', reveal ? tr('Hide password', 'Ficha nenosiri') : tr('Show password', 'Onyesha nenosiri'));
+    input.focus({ preventScroll: true });
   }));
 }
 
