@@ -3,7 +3,7 @@
 // Only PUBLIC values belong here: the Supabase URL and the *anon* key. Never the service_role key.
 import { writeFileSync } from 'node:fs';
 
-const keys = ['SUPABASE_URL', 'SUPABASE_ANON_KEY', 'SITE_URL'];
+const keys = ['SUPABASE_URL', 'SUPABASE_ANON_KEY', 'SITE_URL', 'CLOUDINARY_CLOUD_NAME', 'CLOUDINARY_UPLOAD_PRESET'];
 const env = {};
 for (const k of keys) {
   const v = (process.env[k] || process.env[`VITE_${k}`] || process.env[`NEXT_PUBLIC_${k}`] || '').trim();
