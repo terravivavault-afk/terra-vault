@@ -5,7 +5,7 @@ import { html, raw, mount, fmtBytes, fmtDate, fmtDateTime, timeAgo, copyText, in
 import { t, tr, getLang } from '../lib/i18n.js';
 import { icon } from '../lib/icons.js';
 import { statusBadge, confBadge, emptyState, toast, withBusy, programName, confirmDialog } from '../lib/ui.js';
-import { signedUrls, downloadAsset, friendlyError, ref } from '../lib/api.js';
+import { signedUrls, downloadAsset, friendlyError, ref, makeThumbnailFromUrl, uploadThumbnail } from '../lib/api.js';
 import { renderPreview } from '../lib/preview.js';
 import * as act from '../lib/actions.js';
 
@@ -175,6 +175,14 @@ export default async function assetPage(ctx) {
   host.classList.remove('loading');
   renderPreview(host, { category: a.category, mime: a.mime_type, url: urls.get(a.storage_path), thumb: urls.get(a.thumbnail_path), title: a.title });
   sb.rpc('track_asset_event', { p_asset: a.id, p_kind: 'view' }).then(() => {}, () => {});
+
+  // Repair: videos uploaded earlier may have no thumbnail; make one now from the real video.
+  if (a.category === 'video' && !a.thumbnail_path && canEditAsset(a) && urls.get(a.storage_path)) {
+    makeThumbnailFromUrl(urls.get(a.storage_path), a.mime_type).then(async (blob) => {
+      if (!blob) return;
+      try { const tp = await uploadThumbnail(a.id, blob); if (!tp) return; const { error } = await sb.from('assets').update({ thumbnail_path: tp }).eq('id', a.id); if (error) return; a.thumbnail_path = tp; toast(tr('Video thumbnail created.', 'Picha ya video imetengenezwa.')); } catch { /* optional */ }
+    });
+  }
 
   // ---- actions
   const handlers = {
