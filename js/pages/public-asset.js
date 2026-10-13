@@ -6,6 +6,7 @@ import { icon } from '../lib/icons.js';
 import { assetCard, emptyState, programName, toast, withBusy } from '../lib/ui.js';
 import { PUBLIC_ASSET_SELECT, signedUrls, downloadAsset, hydrateThumbs } from '../lib/api.js';
 import { renderPreview } from '../lib/preview.js';
+import { cdnUrl, cdnThumb } from '../lib/cloudinary.js';
 
 export default async function publicAsset(ctx) {
   const { data: a } = await sb.from('assets').select(PUBLIC_ASSET_SELECT)
@@ -59,7 +60,7 @@ export default async function publicAsset(ctx) {
   if (!ctx.isCurrent()) return;
   const host = ctx.view.querySelector('#preview');
   host.classList.remove('loading');
-  await renderPreview(host, { category: a.category, mime: a.mime_type, url: urls.get(a.storage_path), thumb: urls.get(a.thumbnail_path), title: a.title });
+  await renderPreview(host, { category: a.category, mime: a.mime_type, url: cdnUrl(a) || urls.get(a.storage_path), thumb: cdnThumb(a, 1280, 720) || urls.get(a.thumbnail_path), title: a.title });
 
   ctx.view.querySelector('#dl')?.addEventListener('click', (e) => withBusy(e.currentTarget, async () => {
     try {
