@@ -1,18 +1,69 @@
 {
+  "id": "/terra-vault",
   "name": "TerraVault by Terraviva",
   "short_name": "TerraVault",
   "description": "Terraviva's digital asset library. Protecting Nature, Empowering Communities.",
+  "lang": "en",
+  "dir": "ltr",
   "start_url": "./#/",
   "scope": "./",
   "display": "standalone",
+  "display_override": [
+    "standalone",
+    "minimal-ui"
+  ],
+  "orientation": "any",
   "background_color": "#FEFFF1",
   "theme_color": "#006E70",
+  "categories": [
+    "productivity",
+    "business",
+    "photo"
+  ],
   "icons": [
     {
       "src": "assets/icon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "All assets",
+      "short_name": "Assets",
+      "url": "./#/app/assets",
+      "icons": [
+        {
+          "src": "assets/icon.svg",
+          "sizes": "any",
+          "type": "image/svg+xml"
+        }
+      ]
+    },
+    {
+      "name": "Approval queue",
+      "short_name": "Approvals",
+      "url": "./#/app/approvals",
+      "icons": [
+        {
+          "src": "assets/icon.svg",
+          "sizes": "any",
+          "type": "image/svg+xml"
+        }
+      ]
+    },
+    {
+      "name": "Public library",
+      "short_name": "Library",
+      "url": "./#/explore",
+      "icons": [
+        {
+          "src": "assets/icon.svg",
+          "sizes": "any",
+          "type": "image/svg+xml"
+        }
+      ]
     }
   ]
 }
