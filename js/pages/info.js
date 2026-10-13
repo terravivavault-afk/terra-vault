@@ -60,7 +60,7 @@ function privacy() {
       <p>${tr('How TerraVault handles information.', 'Jinsi TerraVault inavyoshughulikia taarifa.')}</p></div></section>
     <div class="container prose pad-lg">
       ${section(tr('Browsing the public library', 'Kutumia maktaba ya umma'),
-        tr('You can browse and download published items without an account. We do not ask for personal details to do this. We keep simple counts of how often an item is viewed or downloaded.', 'Unaweza kutazama na kupakua vipengee vilivyochapishwa bila akaunti. Hatuombi taarifa binafsi kwa hili. Tunahifadhi hesabu rahisi ya mara ambazo kipengee kimetazamwa au kupakuliwa.'))}
+        tr('You can browse and view published items without an account. We do not ask for personal details to do this. We keep simple counts of how often an item is viewed.', 'Unaweza kutazama vipengee vilivyochapishwa bila akaunti. Hatuombi taarifa binafsi kwa hili. Tunahifadhi hesabu rahisi ya mara ambazo kipengee kimetazamwa.'))}
       ${section(tr('Accounts for staff, partners and donors', 'Akaunti za wafanyakazi, washirika na wafadhili'),
         tr('If you have an account we store your name, email address, role, and a record of important actions such as uploads, approvals, sharing and downloads of internal files. This record exists for accountability and security.', 'Ikiwa una akaunti tunahifadhi jina lako, barua pepe, wadhifa na kumbukumbu ya vitendo muhimu kama kupakia, kuidhinisha, kushiriki na kupakua mafaili ya ndani. Kumbukumbu hii ipo kwa uwajibikaji na usalama.'),
         tr('Only authorised Terraviva administrators can see this record.', 'Ni wasimamizi walioidhinishwa wa Terraviva tu wanaoweza kuiona.'))}
