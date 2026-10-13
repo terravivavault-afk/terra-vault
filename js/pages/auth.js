@@ -86,10 +86,10 @@ export default async function auth(ctx) {
 
   mount(ctx.view, html`
     <section class="auth">
-      <aside class="auth-art">
+      <aside class="auth-art auth-art-center">
         ${landscape()}
         <div class="auth-art-copy">
-          <a class="brand brand-light" href="#/"><img src="assets/emblem.svg" alt="" width="44" height="38"><span><b>TerraVault</b><small>by Terraviva</small></span></a>
+          <a class="brand brand-light" href="#/"><img src="assets/emblem.svg" alt="" width="72" height="63"><span><b>TerraVault</b><small>by Terraviva</small></span></a>
           <h2>${slogan}</h2>
           <p>${tr('One secure home for the photographs, videos and reports behind our conservation, agriculture and community work.', 'Makazi salama ya picha, video na ripoti za kazi zetu za uhifadhi, kilimo na maendeleo ya jamii.')}</p>
         </div>
