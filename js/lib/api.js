@@ -9,7 +9,7 @@ export const ASSET_LIST_SELECT =
   'project:projects(id,name),program:program_areas(id,name,name_sw,color),uploader:profiles!uploaded_by(full_name)';
 
 export const PUBLIC_ASSET_SELECT =
-  'id,title,description,mime_type,file_size,category,thumbnail_path,storage_path,country,region,district,creator,copyright_holder,usage_rights,published_at,public_download,keywords,' +
+  'id,title,description,mime_type,file_size,category,thumbnail_path,storage_path,country,region,district,creator,copyright_holder,usage_rights,published_at,public_download,keywords,cdn_public_id,cdn_resource_type,cdn_version,' +
   'program:program_areas(id,name,name_sw,color,slug),project:projects(id,name),asset_tags(tag:tags(name))';
 
 // ------------------------------------------------------------------ signed URLs
