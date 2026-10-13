@@ -13,6 +13,13 @@ export const SUPABASE_ANON_KEY = ENV.SUPABASE_ANON_KEY ||
 // reset password). Falls back to the address the app is currently opened from.
 export const SITE_URL = (ENV.SITE_URL || (typeof location !== 'undefined' ? location.origin + location.pathname : '')).replace(/\/+$/, '');
 
+// Cloudinary (public media delivery). Cloud name and *unsigned* preset are public by design;
+// never put the Cloudinary API secret in this project.
+export const CLOUDINARY_CLOUD_NAME = ENV.CLOUDINARY_CLOUD_NAME || 'jnwhkmj0';
+export const CLOUDINARY_UPLOAD_PRESET = ENV.CLOUDINARY_UPLOAD_PRESET || 'terravault_unsigned';
+export const CDN_MAX_IMAGE_BYTES = 10 * 1024 * 1024;   // Cloudinary free plan limit
+export const CDN_MAX_VIDEO_BYTES = 100 * 1024 * 1024;
+
 export const BUCKET = 'assets';
 export const PAGE_SIZE = 24;
 export const SUPABASE_JS = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/+esm';
