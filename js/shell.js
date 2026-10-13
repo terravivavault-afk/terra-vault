@@ -28,7 +28,7 @@ function bindLang(scope) {
   }));
 }
 const brand = (href, light = false) => html`<a class="brand ${light ? 'brand-light' : ''}" href="${href}">
-  <img src="assets/emblem.png" alt="" width="40" height="35"><span><b>TerraVault</b><small>by Terraviva</small></span></a>`;
+  <img src="assets/emblem.svg" alt="" width="40" height="35"><span><b>TerraVault</b><small>by Terraviva</small></span></a>`;
 
 // ------------------------------------------------------------------ public shell
 const PUB_NAV = [
