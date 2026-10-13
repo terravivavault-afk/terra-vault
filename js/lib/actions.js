@@ -6,6 +6,7 @@ import { html, raw, esc, fmtBytes, fmtDate, fmtDateTime, copyText, sha256, mimeO
 import { t, tr } from './i18n.js';
 import { icon } from './icons.js';
 import { openModal, confirmDialog, promptDialog, toast, withBusy, options, emptyState } from './ui.js';
+import { mirrorToCdn, cdnIdOf } from './cloudinary.js';
 import { friendlyError, uploadWithProgress, uploadThumbnail, makeThumbnail, removeObjects, invalidateRef } from './api.js';
 import { loadMetaRefs, metaForm, bindMetaForm, readMeta, resolveTagIds } from './meta.js';
 import { validateFile } from './uploader.js';
@@ -81,7 +82,12 @@ export async function publishAsset(a) {
   });
   if (!ok) return false;
   const done = await updateAsset(a.id, { status: 'published', status_note: null, ...(needsPublic ? { confidentiality: 'public' } : {}) }, tr('Published.', 'Imechapishwa.'));
-  if (done) changed();
+  if (done) {
+    // Photos and videos get a fast CDN copy; failure is harmless (Supabase keeps serving them).
+    const cdn = await mirrorToCdn(a.id);
+    if (!cdn.ok && !cdn.skipped) toast(tr('Published, but the fast-delivery copy could not be made. The file still works from the library.', 'Imechapishwa, lakini nakala ya kasi haikutengenezwa. Faili bado linafanya kazi kwenye maktaba.'), 'info', 6000);
+    changed();
+  }
   return done;
 }
 
@@ -93,7 +99,11 @@ export async function unpublishAsset(a) {
   });
   if (!ok) return false;
   const done = await updateAsset(a.id, { status: 'approved', status_note: 'Unpublished' }, tr('Unpublished.', 'Imeondolewa.'));
-  if (done) changed();
+  if (done) {
+    const cdnId = await cdnIdOf(a.id);
+    if (cdnId) toast(tr(`Also delete "${cdnId}" in the Cloudinary Media Library, otherwise its link keeps working.`, `Futa pia "${cdnId}" kwenye Cloudinary Media Library, vinginevyo kiungo chake kitaendelea kufanya kazi.`), 'info', 12000);
+    changed();
+  }
   return done;
 }
 
