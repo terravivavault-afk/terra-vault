@@ -2,6 +2,7 @@
 import { html, raw, esc, $, fmtBytes, fmtDate, CATEGORY_ICON, initials } from './util.js';
 import { icon } from './icons.js';
 import { t, getLang } from './i18n.js';
+import { cdnThumb } from './cloudinary.js';
 
 // ------------------------------------------------------------------ toasts
 export function toast(message, type = 'info', ms = 4200) {
@@ -115,7 +116,8 @@ export function pagination({ page, total, pageSize }) {
 export function assetThumb(a, { overlay = true } = {}) {
   const cat = a.category || 'other';
   return html`<span class="thumb cat-${cat}">
-    ${a.thumbnail_path ? html`<img data-thumb="${a.thumbnail_path}" alt="" loading="lazy" decoding="async">` : ''}
+    ${cdnThumb(a) ? html`<img src="${cdnThumb(a)}" alt="" loading="lazy" decoding="async" onerror="this.closest('.thumb')?.classList.add('no-img');this.remove()">`
+      : a.thumbnail_path ? html`<img data-thumb="${a.thumbnail_path}" alt="" loading="lazy" decoding="async">` : ''}
     <span class="thumb-ph">${raw(icon(CATEGORY_ICON[cat], 30))}</span>
     ${overlay ? html`<span class="type-chip">${t('cat.' + cat)}</span>` : ''}
   </span>`;
